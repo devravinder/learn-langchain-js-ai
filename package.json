@@ -1,0 +1,53 @@
+{
+  "name": "learn-langchain-js-ai",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "module": "module",
+  "scripts": {
+    "s:i": "npx @modelcontextprotocol/inspector",
+    "1:1": "tsx --no-warnings --env-file=.env src/01_chat/1_chat_grok.ts",
+    "1:2": "tsx --no-warnings --env-file=.env src/01_chat/2_chat_open_router.ts",
+    "1:3": "tsx --no-warnings --env-file=.env src/01_chat/3_chat_local_ollama.ts",
+    "2:1": "tsx --no-warnings --env-file=.env src/02_prompt_templates/1_promot_templates",
+    "3:1": "tsx --no-warnings --env-file=.env src/3_structured_output/1_output_parser",
+    "4:1": "tsx --no-warnings --env-file=.env src/4_QA_chain/1_qa_chain",
+    "5:1": "tsx --no-warnings --env-file=.env src/5_chat_memory/1_chat_hostory_inmemory",
+    "5:2": "tsx --no-warnings --env-file=.env src/5_chat_memory/2_chat_history_session",
+    "6:1": "tsx --no-warnings --env-file=.env src/6_loaders_vector_store/1_loaders_vector_store_inmemory",
+    "6:2": "tsx --no-warnings --env-file=.env src/6_loaders_vector_store/2_loaders_vector_store_redis",
+    "7:1": "tsx --no-warnings --env-file=.env src/07_tool_calling_agent/1_tool_calling",
+    "8:1": "tsx --no-warnings --env-file=.env src/08_mcp/01_studio_server/index",
+    "8:1:build": "npx tsc src/08_mcp/01_studio_server/index.ts --outDir dist --module nodenext --moduleResolution nodenext",
+    "8:2": "tsx --no-warnings --env-file=.env src/08_mcp/02_web_sse_server/index",
+    "8:2:build": "npx tsc rc/08_mcp/02_web_sse_server/index.ts --outDir dist --module nodenext --moduleResolution nodenext",
+    "8:3": "tsx --no-warnings --env-file=.env src/08_mcp/03_web_streamble_http_server/index",
+    "8:3:build": "npx tsc rc/08_mcp/03_web_streamble_http_server/index.ts --outDir dist --module nodenext --moduleResolution nodenext"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.17.1",
+  "dependencies": {
+    "@langchain/community": "^0.3.56",
+    "@langchain/core": "^0.3.77",
+    "@langchain/groq": "^0.2.4",
+    "@langchain/ollama": "^0.2.4",
+    "@langchain/openai": "^0.6.13",
+    "@langchain/redis": "^0.1.2",
+    "@modelcontextprotocol/sdk": "^1.18.2",
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "langchain": "^0.3.34",
+    "redis": "^5.8.2",
+    "zod": "^4.1.11"
+  },
+  "devDependencies": {
+    "@modelcontextprotocol/inspector": "^0.16.8",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "@types/node": "^24.5.2",
+    "tsx": "^4.20.5",
+    "typescript": "^5.9.2"
+  }
+}
