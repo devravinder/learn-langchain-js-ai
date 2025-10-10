@@ -2,6 +2,7 @@
 
 ## Note:-
 1. The SSE server should be in running state
+   - `pnpm run 8:2`
 
 
 

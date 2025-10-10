@@ -1,4 +1,4 @@
-import { startStudioServer } from "./studio_server";
+import { startStudioServer } from "./stdio_server";
 import { mcpServer } from "./mcp_server";
 
 // Start server

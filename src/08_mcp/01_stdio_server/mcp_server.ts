@@ -1,5 +1,4 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import z from "zod/v3";
 
 const mcpServer = new McpServer(
@@ -57,8 +56,8 @@ mcpServer.registerTool(
     title: "Multiply",
     description: "Multiplies two numbers",
     inputSchema: {
-      a: z.number(),
-      b: z.number(),
+      a: z.number() as any,
+      b: z.number() as any,
     },
   },
   async ({ a, b }) => {

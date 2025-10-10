@@ -12,9 +12,9 @@
 
 2. open the inpsector UI in the browser
      - add 
-       - Transport Type: `STUDIO`
+       - Transport Type: `STDIO`
        - command: `tsx`
-       - Argumets: `--no-warnings  /home/ravinder/Drive/work-spaces/js_nodejs/learn-langChainJs-ai/src/08_mcp/01_studio_server/index` 
+       - Argumets: `--no-warnings  /home/ravinder/Drive/work-spaces/js_nodejs/learn-langchain-js-ai/src/08_mcp/01_stdio_server/index` 
            - if needed change the file path
 
      - connect
@@ -24,12 +24,12 @@
 
 3. to run as js
   1. build
-    - `npx tsc src/08_mcp/01_studio_server/index.ts --outDir dist --module nodenext --moduleResolution nodenext`
+    - `npx tsc src/08_mcp/01_stdio_server/index.ts --outDir dist --module nodenext --moduleResolution nodenext`
     - or `pnpm run 8:1:build`
 
-  2. from the studio add
+  2. from the stdio add
      - add 
-       - Transport Type: `STUDIO`
+       - Transport Type: `STDIO`
        - command: `node`
-       - Argumets: `/home/ravinder/Drive/work-spaces/js_nodejs/learn-langChainJs-ai/dist/index.js` 
+       - Argumets: `/home/ravinder/Drive/work-spaces/js_nodejs/learn-langchain-js-ai/dist/index.js` 
            - if needed change the file path

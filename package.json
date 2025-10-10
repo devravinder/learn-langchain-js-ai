@@ -17,12 +17,15 @@
     "6:1": "tsx --no-warnings --env-file=.env src/6_loaders_vector_store/1_loaders_vector_store_inmemory",
     "6:2": "tsx --no-warnings --env-file=.env src/6_loaders_vector_store/2_loaders_vector_store_redis",
     "7:1": "tsx --no-warnings --env-file=.env src/07_tool_calling_agent/1_tool_calling",
-    "8:1": "tsx --no-warnings --env-file=.env src/08_mcp/01_studio_server/index",
-    "8:1:build": "npx tsc src/08_mcp/01_studio_server/index.ts --outDir dist --module nodenext --moduleResolution nodenext",
+    "8:1": "tsx --no-warnings --env-file=.env src/08_mcp/01_stdio_server/index",
+    "8:1:build": "npx tsc src/08_mcp/01_stdio_server/index.ts --outDir dist --module nodenext --moduleResolution nodenext",
     "8:2": "tsx --no-warnings --env-file=.env src/08_mcp/02_web_sse_server/index",
     "8:2:build": "npx tsc rc/08_mcp/02_web_sse_server/index.ts --outDir dist --module nodenext --moduleResolution nodenext",
     "8:3": "tsx --no-warnings --env-file=.env src/08_mcp/03_web_streamble_http_server/index",
-    "8:3:build": "npx tsc rc/08_mcp/03_web_streamble_http_server/index.ts --outDir dist --module nodenext --moduleResolution nodenext"
+    "8:3:build": "npx tsc rc/08_mcp/03_web_streamble_http_server/index.ts --outDir dist --module nodenext --moduleResolution nodenext",
+    "8:4": "tsx --no-warnings --env-file=.env src/08_mcp/04_mcp_client_std/index",
+    "8:5": "tsx --no-warnings --env-file=.env src/08_mcp/05_mcp_client_sse/index",
+    "8:6": "tsx --no-warnings --env-file=.env src/08_mcp/06_mcp_client_streamable_http/index"
   },
   "keywords": [],
   "author": "",
