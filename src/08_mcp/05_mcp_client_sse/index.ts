@@ -9,6 +9,7 @@ const listTools = async (client: Client) => {
   console.log(tools);
 };
 
+
 const callTool = async (
   client: Client,
   name: string,
