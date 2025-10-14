@@ -18,7 +18,7 @@
 
 3. Prompt (Bolt)
   - You are a professional react developer
-  - create chat application with react-ts + tailwind + shandcn + bun
+  - create simple AI chat application with react-ts + tailwind + shandcn + bun
   - support for dark, light theme - with toggle on top menu
   - responsive mobile first
-  - chat UI should look like grok ai
+  - implement in-memory implementation chat intercation (user input - AI reponse)
