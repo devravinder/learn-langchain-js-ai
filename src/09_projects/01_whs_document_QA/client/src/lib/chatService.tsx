@@ -33,7 +33,7 @@ export interface Message {
   };
   
   export const createMessage = (role: 'user' | 'assistant', content: string): Message => ({
-    id: Date.now()+"id",
+    id: crypto.randomUUID(),
     role,
     content,
     timestamp: new Date(),

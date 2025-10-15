@@ -7,6 +7,7 @@ const userRoutes = new Elysia({ prefix: "/user" })
 
 const routes = new Elysia({ prefix: "/api" })
   .use(userRoutes)
+  .use(import('./ai/chat'))
   .get("/", "hello world")
   .all("/*", "Not Found");
 

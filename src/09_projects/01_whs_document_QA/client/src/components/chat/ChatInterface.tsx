@@ -1,9 +1,11 @@
 import { useState, useRef, useEffect } from "react";
 import { ScrollArea } from "../ui/scroll-area";
-import { createMessage, generateAIResponse } from "../../lib/chatService";
+import { createMessage } from "../../lib/chatService";
 import type { Message } from "../../lib/chatService";
 import { ChatMessage } from "./ChatMessage";
 import { ChatInput } from "./ChatInput";
+
+const apiUrl = window.__RUNTIME_CONFIG__.BUN_PUBLIC_API_URL;
 
 export function ChatInterface() {
   const [messages, setMessages] = useState<Message[]>([
@@ -14,12 +16,39 @@ export function ChatInterface() {
   ]);
   const [isTyping, setIsTyping] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const eventSourceRef = useRef<EventSource | null>(null);
 
-  useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current?.scrollIntoView({ behavior: "smooth" });
-    }
-  }, [messages]);
+  const callAI = (content: string) => {
+    const eventSource = new EventSource(
+      `${apiUrl}/chat?prompt=${encodeURIComponent(content)}`
+    );
+    eventSourceRef.current = eventSource;
+
+    // set first empty
+    const assistantMessage = createMessage("assistant", "Thinking...");
+    setMessages((prev) => [...prev, assistantMessage]);
+
+    let data = "";
+    eventSource.onmessage = (event) => {
+      if (event.data === "[DONE]") {
+        eventSource.close();
+        return;
+      }
+      data += event.data;
+
+      setMessages((prev) => {
+        const newMessages = [...prev];
+        let last = newMessages.at(-1)!;
+        last.content = data;
+
+        return newMessages;
+      });
+    };
+
+    eventSource.onerror = () => {
+      eventSource.close();
+    };
+  };
 
   const handleSendMessage = async (content: string) => {
     const userMessage = createMessage("user", content);
@@ -27,11 +56,8 @@ export function ChatInterface() {
     setIsTyping(true);
 
     try {
-      const aiResponse = await generateAIResponse(content);
-      const assistantMessage = createMessage("assistant", aiResponse);
-      setMessages((prev) => [...prev, assistantMessage]);
+      await callAI(content);
     } catch (error) {
-      console.error("Error generating AI response:", error);
       const errorMessage = createMessage(
         "assistant",
         "Sorry, I encountered an error. Please try again."
@@ -41,6 +67,22 @@ export function ChatInterface() {
       setIsTyping(false);
     }
   };
+
+  const scrollToBottom = () => {
+    if (scrollRef.current) {
+      scrollRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  useEffect(() => {
+    return () => {
+      if (eventSourceRef.current) eventSourceRef.current.close();
+    };
+  }, []);
 
   return (
     <div className="flex flex-col h-full w-full justify-between relative ">
