@@ -24,7 +24,6 @@ export function ChatInterface() {
     );
     eventSourceRef.current = eventSource;
 
-    // set first empty
     const assistantMessage = createMessage("assistant", "Thinking...");
     setMessages((prev) => [...prev, assistantMessage]);
 
