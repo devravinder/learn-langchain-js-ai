@@ -8,9 +8,19 @@ import {
 import pg from "pg";
 import { StringOutputParser } from "@langchain/core/output_parsers";
 import { createReactAgent } from "@langchain/langgraph/prebuilt";
-import { HumanMessage } from "@langchain/core/messages";
+import {
+  BaseMessage,
+  HumanMessage,
+  SystemMessage,
+} from "@langchain/core/messages";
 import { PostgresSaver } from "@langchain/langgraph-checkpoint-postgres";
-import { MessagesState, Annotation } from "@langchain/langgraph";
+import {
+  MessagesState,
+  Annotation,
+  StateGraph,
+  START,
+  END,
+} from "@langchain/langgraph";
 import { AIMessageChunk } from "@langchain/core/messages"; // Added for proper typing of streamed chunks
 import { RunnableConfig } from "@langchain/core/runnables"; // Added for config typing
 
@@ -31,56 +41,68 @@ const poolConfig = {
 
 const pool = new pg.Pool(poolConfig);
 
-/* const model = new ChatOllama({
+const model = new ChatOllama({
   model: "qwen2.5:0.5b",
   temperature: 0.9,
   maxRetries: 2,
   baseUrl: "http://localhost:11434",
-}); */
+});
 
-const model = new ChatGroq({
+/* const model = new ChatGroq({
     apiKey: process.env.GROK_API_KEY,
     model: "qwen/qwen3-32b", // gemma2-9b-it, llama-3.1-8b-instant, openai/gpt-oss-120b
     temperature: 0.9,
     maxTokens: 250,
-  });
+  }); */
 
-
-// const llm = systemPrompt.pipe(model as any).pipe(new StringOutputParser());
-
-const checkpointSaver = new PostgresSaver(pool);
-await checkpointSaver.setup();
-
-
-const prrompt = `
-You are a helpful assistant. As assistant answer all questions in short, simple, and give precise answer.
- Do conversation if needed, but give always short answer. Don't give your thinking<think><.think>.
-`;
-// React Agent is Graph the is compiled
-const agent = createReactAgent({
-  llm:model as any,
-  tools: [],
-  checkpointSaver,
-  stateModifier: prrompt
+export const StateAnnotation = Annotation.Root({
+  messages: Annotation<BaseMessage[]>({
+    reducer: (state: BaseMessage[], update: BaseMessage[]) =>
+      state.concat(update),
+    default: () => [],
+  }),
 });
 
+async function agentNode(
+  state: typeof StateAnnotation.State,
+  config?: RunnableConfig
+) {
+  const systemPrompt =
+    new SystemMessage(`You are a helpful assistant. Answer all questions in short, simple, and give precise answer.
+    chcek the previous conversation for context`);
+  const response = await model.invoke([systemPrompt, ...state.messages]);
+  return { messages: [response] };
+}
+
+const builder = new StateGraph(StateAnnotation)
+  .addNode("agent", agentNode)
+  .addEdge(START, "agent")
+  .addEdge("agent", END);
+
+const checkpointSaver = new PostgresSaver(pool);
+
+const graph = builder.compile({ checkpointer: checkpointSaver });
+
 const query = async function* (input: string, sessionId: string) {
-  
-  const streamRes = await agent.stream(
-    { messages: [new HumanMessage(input)] },
-    { 
-      configurable: { thread_id: sessionId },
-      streamMode: "messages",
-   } 
-  );
+  const userInput = { messages: [new HumanMessage(input)] };
+  const streamRes = await graph.stream(userInput, {
+    configurable: { thread_id: sessionId, streamMode: "messages" },
+    recursionLimit: 5,
+  });
 
   for await (const chunk of streamRes) {
-        const aiMessage = chunk[0]
-        yield aiMessage.content;
-    
+    const content = chunk.agent?.messages[0].content;
+    if (content) yield content;
   }
 };
 
+async function getHistory(sessionId: string) {
+  const messages = await graph.getStateHistory({ configurable: { thread_id: sessionId } })
+
+  return messages;
+}
+
 export default {
   query,
+  getHistory,
 };

@@ -10,10 +10,10 @@ chatRouter.get("/chat", async function* ({ query, set }) {
     return "Missing prompt";
   }
 
-  const resIterable = aiChatService.query(prompt, "user-session");
+  const resIterable = aiChatService.query(prompt, "user-session-2");
 
   for await (const chunk of resIterable) {
-    yield sse(chunk);
+    yield sse(chunk.toString());
   }
 
   yield sse("[DONE]");
