@@ -11,6 +11,8 @@ import { createReactAgent } from "@langchain/langgraph/prebuilt";
 import { HumanMessage } from "@langchain/core/messages";
 import { PostgresSaver } from "@langchain/langgraph-checkpoint-postgres";
 import { MessagesState, Annotation } from "@langchain/langgraph";
+import { AIMessageChunk } from "@langchain/core/messages"; // Added for proper typing of streamed chunks
+import { RunnableConfig } from "@langchain/core/runnables"; // Added for config typing
 
 const {
   DATABASE_HOST,
@@ -63,6 +65,7 @@ const agent = createReactAgent({
 });
 
 const query = async function* (input: string, sessionId: string) {
+  
   const streamRes = await agent.stream(
     { messages: [new HumanMessage(input)] },
     { 
@@ -78,31 +81,6 @@ const query = async function* (input: string, sessionId: string) {
   }
 };
 
-const getHistory = async (sessionId: string) => {
-  // return chatHistory(sessionId).getMessages()
-
-  const checkpoint = await checkpointSaver.get({ configurable: { thread_id: sessionId } });
-  if (!checkpoint) return [];
-
-  // State contains messages array (LangChain format)
-  const state = checkpoint.channel_values as MessagesState;
-  const messages = state.messages || [];
-
-  return messages.map((msg, idx) => ({
-    id: idx + 1,
-    sessionId,
-    role: msg._getType(), // 'human' | 'ai'
-    content: msg.content,
-  }));
-
-  const res = await pool.query(
-    'SELECT id, session_id AS "sessionId", message FROM langchain_chat_histories WHERE session_id = $1',
-    [sessionId]
-  );
-  return res.rows;
-};
-
 export default {
   query,
-  getHistory,
 };
