@@ -92,7 +92,12 @@ const getHistory = async (sessionId: string) => {
   return res.rows;
 };
 
+const shutdown = async () => {
+  await pool.end();
+}
+
 export default {
   query,
   getHistory,
+  shutdown
 };
