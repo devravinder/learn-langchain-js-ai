@@ -1,12 +1,4 @@
-import { ChatOllama } from "@langchain/ollama";
-import { ChatGroq } from "@langchain/groq";
-
-import {
-  ChatPromptTemplate,
-  MessagesPlaceholder,
-} from "@langchain/core/prompts";
 import pg from "pg";
-
 import {
   BaseMessage,
   HumanMessage,
@@ -14,14 +6,12 @@ import {
 } from "@langchain/core/messages";
 import { PostgresSaver } from "@langchain/langgraph-checkpoint-postgres";
 import {
-  MessagesState,
   Annotation,
   StateGraph,
   START,
   END,
 } from "@langchain/langgraph";
-import { AIMessageChunk } from "@langchain/core/messages"; // Added for proper typing of streamed chunks
-import { RunnableConfig } from "@langchain/core/runnables"; // Added for config typing
+import { RunnableConfig } from "@langchain/core/runnables";
 
 import { model } from "./model";
 

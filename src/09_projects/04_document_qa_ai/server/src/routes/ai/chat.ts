@@ -10,7 +10,6 @@ chatRouter.get("/chat", async function* ({ query, set }) {
     return "Missing prompt";
   }
 
-  console.log({prompt})
   const resIterable = aiChatService.query(prompt, session);
 
   for await (const chunk of resIterable) {
