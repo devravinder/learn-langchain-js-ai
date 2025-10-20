@@ -1,1 +1,3 @@
-console.log("hello")
+import { startServer } from "./server.js";
+
+startServer(process.env.PORT!);
