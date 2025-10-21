@@ -4,6 +4,7 @@ import { createMessage } from "../../lib/chatService.js";
 import type { Message } from "../../lib/chatService.js";
 import { ChatMessage } from "./ChatMessage.js";
 import { ChatInput } from "./ChatInput.js";
+import { apiRequest } from "@/services/apiClient.js";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -16,37 +17,6 @@ export function ChatInterface() {
   ]);
   const [isTyping, setIsTyping] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const eventSourceRef = useRef<EventSource | null>(null);
-
-  const callAI = (content: string) => {
-    const eventSource = new EventSource(
-      `${apiUrl}/chat?prompt=${encodeURIComponent(content)}`
-    );
-    eventSourceRef.current = eventSource;
-
-    const assistantMessage = createMessage("assistant", "Thinking...");
-    setMessages((prev) => [...prev, assistantMessage]);
-
-    let data = "";
-    eventSource.onmessage = (event) => {
-      if (event.data === "[DONE]") {
-        eventSource.close();
-        return;
-      }
-      data += event.data;
-      setMessages((prev) => {
-        const newMessages = [...prev];
-        const last = newMessages.at(-1)!;
-        last.content = data;
-
-        return newMessages;
-      });
-    };
-
-    eventSource.onerror = () => {
-      eventSource.close();
-    };
-  };
 
   const handleSendMessage = async (content: string) => {
     const userMessage = createMessage("user", content);
@@ -54,13 +24,20 @@ export function ChatInterface() {
     setIsTyping(true);
 
     try {
-      await callAI(content);
+      const res = await apiRequest<{content:string, conversationId: string}>(
+        `${apiUrl}/chat?prompt=${encodeURIComponent(content)}`
+      );
+
+      const aiMessage = createMessage("assistant", res.content);
+      setMessages((prev) => [...prev, aiMessage]);
     } catch (error) {
-      const errorMessage = createMessage(
+      console.log(error);
+
+      const aiMessage = createMessage(
         "assistant",
         "Sorry, I encountered an error. Please try again."
       );
-      setMessages((prev) => [...prev, errorMessage]);
+      setMessages((prev) => [...prev, aiMessage]);
     } finally {
       setIsTyping(false);
     }
@@ -75,12 +52,6 @@ export function ChatInterface() {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
-
-  useEffect(() => {
-    return () => {
-      if (eventSourceRef.current) eventSourceRef.current.close();
-    };
-  }, []);
 
   return (
     <div className="flex flex-col h-full w-full justify-between relative ">

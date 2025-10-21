@@ -1,33 +1,33 @@
 import { Elysia, sse, t } from "elysia";
 import aiChatService from "../../services/aiService";
+import { randomUUID } from "crypto";
 
 const chatRouter = new Elysia();
 
-chatRouter.get("/chat", async function* ({ query, set }) {
-  const { prompt, session=`${Date.now()}-session` } = query as { prompt: string, session: string };
-  if (!prompt) {
-    set.status = 400;
-    return "Missing prompt";
+chatRouter.get(
+  "/chat/:conversationId?",
+  async function* ({ body, query, params: { conversationId = randomUUID() }, set }) {
+    const { prompt } = query as { prompt: string };
+
+    if (!prompt) {
+      set.status = 400;
+      return "Missing prompt";
+    }
+
+    const res = await aiChatService.query(prompt, conversationId);
+    return {content: res, conversationId}
   }
-
-  const resIterable = aiChatService.query(prompt, session);
-
-  for await (const chunk of resIterable) {
-    yield sse(chunk.toString());
-  }
-
-  yield sse("[DONE]");
-});
+);
 
 const historySchema = {
   params: t.Object({
-    sessionId: t.String(),
+    conversationId: t.String(),
   }),
 };
 chatRouter.get(
-  "/history/:sessionId",
-  ({ params: { sessionId } }) => {
-    return aiChatService.getHistory(sessionId)
+  "/history/:conversationId",
+  ({ params: { conversationId } }) => {
+    return aiChatService.getHistory(conversationId);
   },
   historySchema
 );

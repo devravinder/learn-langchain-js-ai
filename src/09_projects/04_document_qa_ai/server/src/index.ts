@@ -1,17 +1,28 @@
 import { Elysia } from "elysia";
-import { cors } from '@elysiajs/cors'
-import { node } from '@elysiajs/node'
+import { cors } from "@elysiajs/cors";
+import { node } from "@elysiajs/node";
 
-const app = new Elysia({ adapter: node() });
+import aiChatService from "./services/aiService";
 
-const PORT = process.env.PORT || 3001; 
+const start = () => {
+  const app = new Elysia({ adapter: node() });
 
-app
-.use(cors())
-.use(import("./routes"))
-.all("/*", "Not Found")
-.listen(PORT);
+  const PORT = process.env.PORT || 3001;
 
-console.log(
-  `🦊 Elysia is running at ${PORT}`
-);
+  app.use(cors()).use(import("./routes")).all("/*", "Not Found").listen(PORT);
+
+  console.log(`🦊 Elysia is running at ${PORT}`);
+};
+
+const setup = async () => {
+  await aiChatService.initializeService();
+};
+
+
+
+setup()
+.then(start)
+.catch(()=>{
+  console.log("error")
+  process.exit()
+})
