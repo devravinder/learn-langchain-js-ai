@@ -72,7 +72,6 @@ class ChatGraph {
       new SystemMessage(`You are a helpful assistant. Answer all questions in short, simple, and give precise answer.
           chcek the previous conversation for context`);
 
-    console.log({ h: state.messages, config });
     const response = await this.model.invoke([systemPrompt, ...state.messages]);
     return { messages: [response] };
   };
