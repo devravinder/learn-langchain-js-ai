@@ -53,6 +53,7 @@ export async function apiRequest<TResponse = any, TBody = any>(
   const response = await fetch(fullUrl, fetchOptions);
 
   if (!response.ok) {
+    
     const errorText = await response.text();
     throw new Error(`HTTP ${response.status}: ${errorText}`);
   }

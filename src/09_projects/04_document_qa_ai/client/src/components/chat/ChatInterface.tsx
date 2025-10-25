@@ -5,10 +5,14 @@ import type { Message } from "../../lib/chatService.js";
 import { ChatMessage } from "./ChatMessage.js";
 import { ChatInput } from "./ChatInput.js";
 import { apiRequest } from "@/services/apiClient.js";
+import { useNavigate } from "react-router";
+import { API_URL } from "@/constants";
 
-const apiUrl = import.meta.env.VITE_API_URL;
 
 export function ChatInterface() {
+
+  const navigate = useNavigate()
+
   const [messages, setMessages] = useState<Message[]>([
     createMessage(
       "assistant",
@@ -25,11 +29,13 @@ export function ChatInterface() {
 
     try {
       const res = await apiRequest<{content:string, conversationId: string}>(
-        `${apiUrl}/chat?prompt=${encodeURIComponent(content)}`
+        `${API_URL}/chat?prompt=${encodeURIComponent(content)}`
       );
 
       const aiMessage = createMessage("assistant", res.content);
       setMessages((prev) => [...prev, aiMessage]);
+
+      navigate(`/chat/${res.conversationId}`)
     } catch (error) {
       console.log(error);
 

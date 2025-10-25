@@ -31,7 +31,7 @@ class ChatGraph {
   }
 
   async init() {
-    this.checkpointSaverService.init();
+    await this.checkpointSaverService.init();
     this.graph = this.initializeGraph();
   }
 
@@ -71,28 +71,40 @@ class ChatGraph {
     const systemPrompt =
       new SystemMessage(`You are a helpful assistant. Answer all questions in short, simple, and give precise answer.
           chcek the previous conversation for context`);
+
+    console.log({ h: state.messages, config });
     const response = await this.model.invoke([systemPrompt, ...state.messages]);
     return { messages: [response] };
   };
 
   async query(input: string, conversationId: string) {
+    if (!this.graph) {
+      throw new Error("Graph not initialized. Call init() first.");
+    }
+
     const userInput = { messages: [new HumanMessage(input)] };
-    const {messages} = await this.graph.invoke(userInput, {
+    const { messages } = await this.graph.invoke(userInput, {
       configurable: { thread_id: conversationId },
       recursionLimit: 5,
     });
 
-    const last = messages[messages.length-1]
+    const last = messages[messages.length - 1];
 
     return last.content;
   }
 
   async getHistory(conversationId: string) {
-    const messages = await this.graph.getStateHistory({
-      configurable: { thread_id: conversationId },
+    const history = this.graph.getStateHistory({
+      configurable: { thread_id: conversationId }
     });
 
-    return messages;
+
+    for await( const state of history){
+      // console.log(state,"-------")
+    }
+
+
+    return [];
   }
 }
 

@@ -26,8 +26,10 @@ const historySchema = {
 };
 chatRouter.get(
   "/history/:conversationId",
-  ({ params: { conversationId } }) => {
-    return aiChatService.getHistory(conversationId);
+  async ({ params: { conversationId }, set }) => {
+    set.headers["content-type"] = "application/json";
+    const res = await aiChatService.getHistory(conversationId);
+    return res
   },
   historySchema
 );

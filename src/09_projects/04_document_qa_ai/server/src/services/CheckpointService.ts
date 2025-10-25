@@ -31,6 +31,9 @@ class CheckpointService{
     getCheckpointer(){
       return this.checkpointSaver;
     }
+    async close() {
+      await this.pool.end();
+    }
 }
 
 
