@@ -12,8 +12,8 @@
 - first add env variables
   ```
      PORT=3001
-     USE_LOCAL_MODELS=false
-     # true / false
+     MODELS_ENV=CLOUD
+     # LOCAL | CLOUD | HYBROD
 
      # add only required keys & adjust in models.ts
      GROK_API_KEY=key
