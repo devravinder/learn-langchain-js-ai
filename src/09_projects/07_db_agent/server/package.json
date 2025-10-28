@@ -1,0 +1,37 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx --no-warnings --env-file=.env --watch src/index.ts",
+    "seed": "tsx --no-warnings --env-file=.env src/seed-db.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.18.3",
+  "devDependencies": {
+    "@types/node": "^24.9.1",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "@elysiajs/cors": "^1.4.0",
+    "@elysiajs/node": "^1.4.1",
+    "@langchain/classic": "^1.0.0",
+    "@langchain/community": "^1.0.0",
+    "@langchain/core": "^1.0.1",
+    "@langchain/google-genai": "^1.0.0",
+    "@langchain/groq": "^1.0.0",
+    "@langchain/langgraph": "^1.0.1",
+    "@langchain/ollama": "^1.0.0",
+    "@langchain/openai": "^1.0.0",
+    "@langchain/qdrant": "^1.0.0",
+    "@langchain/textsplitters": "^1.0.0",
+    "elysia": "^1.4.13",
+    "langchain": "^1.0.1",
+    "memoirist": "^0.4.0"
+  }
+}
