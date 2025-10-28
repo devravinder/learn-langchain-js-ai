@@ -24,7 +24,7 @@ const { chatModel } = models;
 const GraphState = z.object({
   messages: z
     .array(z.custom<BaseMessage>())
-    .register(registry, MessagesZodMeta),
+    .register(registry, MessagesZodMeta as any),
 });
 
 type RagState = z.infer<typeof GraphState>;
@@ -32,16 +32,16 @@ type RagState = z.infer<typeof GraphState>;
 // Define the graph state
 
 // Define the tools for the agent to use
-const employeeLookupTool = tool(
+const developerLookupTool = tool(
   async ({ query, n = 10 }) => {
-    console.log("Employee lookup tool called");
+    console.log("Developer lookup tool called");
 
     const result = await vectorStore.similaritySearchWithScore(query, n);
     return JSON.stringify(result);
   },
   {
-    name: "employee_lookup",
-    description: "Gathers employee details from the HR database",
+    name: "developer_lookup",
+    description: "Gathers developer details from the database",
     schema: z.object({
       query: z.string().describe("The search query"),
       n: z
@@ -53,7 +53,7 @@ const employeeLookupTool = tool(
   }
 );
 
-const tools = [employeeLookupTool];
+const tools = [developerLookupTool];
 
 // We can extract the state typing via `GraphState.State`
 const toolNode = new ToolNode<RagState>(tools);
@@ -66,6 +66,7 @@ function shouldContinue(state: RagState) {
   const lastMessage = messages[messages.length - 1] as AIMessage;
 
   // If the LLM makes a tool call, then we route to the "tools" node
+  // if the last message is tool call
   if (lastMessage.tool_calls?.length) {
     return "tools";
   }
@@ -78,13 +79,18 @@ async function callModel(state: RagState) {
   const prompt = ChatPromptTemplate.fromMessages([
     [
       "system",
-      `You are a helpful AI assistant, collaborating with other assistants. Use the provided tools to progress towards answering the question. If you are unable to fully answer, that's OK, another assistant with different tools will help where you left off. Execute what you can to make progress. If you or any of the other assistants have the final answer or deliverable, prefix your response with FINAL ANSWER so the team knows to stop. You have access to the following tools: {tool_names}.\n{system_message}\nCurrent time: {time}.`,
+      `You are a helpful AI assistant, collaborating with other assistants. Use the provided tools to progress towards answering the question.
+       If you are unable to fully answer, that's OK, another assistant with different tools will help where you left off. 
+       Execute what you can to make progress. 
+       If you or any of the other assistants have the final answer or deliverable,
+       prefix your response with FINAL ANSWER so the team knows to stop. 
+        You have access to the following tools: {tool_names}.\n{system_message}\nCurrent time: {time}.`,
     ],
     new MessagesPlaceholder("messages"),
   ]);
 
   const formattedPrompt = await prompt.formatMessages({
-    system_message: "You are helpful HR Chatbot Agent.",
+    system_message: "You are helpful HR Recruter Chatbot Agent.",
     time: new Date().toISOString(),
     tool_names: tools.map((tool) => tool.name).join(", "),
     messages: state.messages,
@@ -107,6 +113,7 @@ const workflow = new StateGraph(GraphState)
 const checkpointer = new MemorySaver();
 
 const app = workflow.compile({ checkpointer });
+
 export async function callAgent(query: string, thread_id: string) {
   const finalState = await app.invoke(
     {
@@ -115,5 +122,5 @@ export async function callAgent(query: string, thread_id: string) {
     { recursionLimit: 15, configurable: { thread_id: thread_id } }
   );
 
-  return finalState.messages[finalState.messages.length - 1].content;
+  return finalState.messages[finalState.messages.length - 1]?.content;
 }

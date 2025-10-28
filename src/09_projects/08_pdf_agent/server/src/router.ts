@@ -10,7 +10,7 @@ chatRouter.get("/",()=>"Hello World")
 
 /* 
 // API endpoint to start a new conversation
-// curl -X POST -H "Content-Type: application/json" -d '{"message": "Build a team to make an iOS app, and tell me the talent gaps."}' http://localhost:3001/api/chat/123456789
+// curl -X POST -H "Content-Type: application/json" -d '{"message": "Build a team to make an AI web app, and tell me the talent gaps."}' http://localhost:3001/api/chat/123456789
     
 
   // API endpoint to send a message in an existing conversation

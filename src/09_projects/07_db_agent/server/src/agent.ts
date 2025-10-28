@@ -24,7 +24,7 @@ const { chatModel } = models;
 const GraphState = z.object({
   messages: z
     .array(z.custom<BaseMessage>())
-    .register(registry, MessagesZodMeta),
+    .register(registry, MessagesZodMeta as any),
 });
 
 type RagState = z.infer<typeof GraphState>;
@@ -115,5 +115,5 @@ export async function callAgent(query: string, thread_id: string) {
     { recursionLimit: 15, configurable: { thread_id: thread_id } }
   );
 
-  return finalState.messages[finalState.messages.length - 1].content;
+  return finalState.messages[finalState.messages.length - 1]?.content;
 }
