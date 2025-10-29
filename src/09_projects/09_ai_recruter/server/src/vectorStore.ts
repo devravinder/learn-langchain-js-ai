@@ -6,7 +6,7 @@ import models from "./models.js";
 const { embeddingModel } = models;
 
 export const qdrantVectorStore = async (
-  collectionName: string = "pdf-documents"
+  collectionName: string = "developer_cvs"
 ) => {
   const vectorStore = await QdrantVectorStore.fromExistingCollection(
     embeddingModel,

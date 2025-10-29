@@ -1,41 +1,73 @@
-import { useState } from 'react';
-import { Send, Paperclip } from 'lucide-react';
-import { Button } from '../../components/ui/button.js';
-import { cn } from '../../lib/utils.js';
+import { useState, type MouseEventHandler } from "react";
+import { Send, Paperclip } from "lucide-react";
+import mime from "mime/lite";
+import { Button } from "../../components/ui/button.js";
+import { cn } from "../../lib/utils.js";
+import openFile from "@/lib/openFile.js";
+import apiClient from "@/services/apiClient.js";
 
 interface ChatInputProps {
   onSendMessage: (message: string) => void;
   disabled?: boolean;
 }
 
+const allowedTypes = [
+  mime.getType(".md"),
+  mime.getType(".pdf"),
+  mime.getType(".txt"),
+];
+
 export function ChatInput({ onSendMessage, disabled }: ChatInputProps) {
-  const [input, setInput] = useState('');
+  const [input, setInput] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (input.trim() && !disabled) {
       onSendMessage(input.trim());
-      setInput('');
+      setInput("");
     }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSubmit(e);
     }
   };
 
-  const handleFileClick = () => {
-    console.log('File upload clicked');
+  const handleFileClick: MouseEventHandler = async (event) => {
+    console.log("File upload clicked");
+    event.stopPropagation();
+    const files = await openFile({
+      multiple: false,
+      accept: allowedTypes.join(","),
+    });
+
+    const file = files[0];
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const { data, error } = await apiClient.POST("/api/upload", {
+      body: {
+        file: file as unknown as string, // open api type issue
+      },
+      bodySerializer: (body) => {
+        const formData = new FormData();
+        formData.append("file", body.file);
+        return formData;
+      },
+    });
+
+    console.log({ data, error });
   };
 
   return (
     <form onSubmit={handleSubmit}>
       <div
         className={cn(
-          'flex items-end gap-2 rounded-lg border bg-sidebar p-2 transition-colors',  
-          disabled && 'opacity-50'
+          "flex items-end gap-2 rounded-lg border bg-sidebar p-2 transition-colors",
+          disabled && "opacity-50"
         )}
       >
         <Button

@@ -1,19 +1,22 @@
 import { vectorStore } from "./vectorStore.js";
 
 //===
-import { loadPdfDocument } from "./pdf-loader.js";
+import { loadPdfAsSingleDocument } from "./loaders/pdf-loader.js";
+import { loadTextAsSigleDoc } from "./loaders/text-loader.js";
 
 
 
-const pdfPath = "./src/Ravinder_Reddy _Full_Stack_Developer_ CV.pdf"
+const pdfPath = "./data/Ravinder_Reddy _Full_Stack_Developer_ CV.pdf"
+const pdfDocument = await loadPdfAsSingleDocument(pdfPath)
 
-const document = await loadPdfDocument(pdfPath)
+const mdPath = "./data/AI_developer_CV.md"
+const mdDocument = await loadTextAsSigleDoc(mdPath)
 
 async function seedDatabase(): Promise<void> {
   try {
     await vectorStore.delete({ filter: {} });
 
-    await vectorStore.addDocuments([document]);
+    await vectorStore.addDocuments([pdfDocument, mdDocument]);
 
     console.log("Database seeding completed");
   } catch (error) {
