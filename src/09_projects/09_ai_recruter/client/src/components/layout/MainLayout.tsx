@@ -1,7 +1,7 @@
-import Section from "./Section.js";
+import { Outlet } from "react-router";
 import LeftMenu from "./LeftMenu.js";
 import RightMenu from "./RightMenu.js";
-import { Outlet } from "react-router";
+import Section from "./Section.js";
 
 export default function MainLayout() {
   return (

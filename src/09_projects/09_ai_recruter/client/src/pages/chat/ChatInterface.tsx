@@ -61,7 +61,7 @@ export function ChatInterface({ history }: { history: Message[] }) {
   return (
     <div className="flex flex-col h-full w-full justify-between relative ">
       <ScrollArea className="flex-1 pb-16 overflow-y-auto">
-        <div className="space-y-4 px-12 pt-4 pb-20 w-full max-w-5xl min-w-sm mx-auto">
+        <div className="space-y-4 px-12 pt-4 pb-20 w-full min-w-sm mx-auto">
           {messages.map((message) => (
             <ChatMessage key={message.id} {...message} />
           ))}

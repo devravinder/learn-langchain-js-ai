@@ -34,7 +34,7 @@ export function ChatInput({ onSendMessage, disabled }: ChatInputProps) {
     <form onSubmit={handleSubmit}>
       <div
         className={cn(
-          'flex items-end gap-2 rounded-lg border bg-background p-2 transition-colors',  
+          'flex items-end gap-2 rounded-lg border bg-sidebar p-2 transition-colors',  
           disabled && 'opacity-50'
         )}
       >

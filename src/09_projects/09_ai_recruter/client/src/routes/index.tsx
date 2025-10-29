@@ -1,7 +1,9 @@
 import { lazy, Suspense, type ElementType } from "react";
 import { RouterProvider, createHashRouter, Navigate } from "react-router";
+
 import MainLayout from "@/components/layout/MainLayout";
 import chatHistoryLoader from "@/pages/chat/chatHistoryLoader";
+import conversationLoader from "@/pages/chat/conversationLoader";
 
 const Loader = () => <div>Loading...</div>;
 
@@ -14,17 +16,26 @@ const Loadable = (Component: ElementType) => (props: any) => {
   );
 };
 
+
+
 const ANY_MATCH = "*";
 export default function Routes() {
   const router = createHashRouter([
     {
       Component: MainLayout,
+      loader: conversationLoader,
+      shouldRevalidate:({ currentParams, nextParams })=>{
+        return (!currentParams.conversationId) && (!!nextParams.conversationId);
+      },
       children: [
         { index: true, element: <Navigate to={"/chat"} replace /> },
         {
           path: "/chat/:conversationId?",
           loader: chatHistoryLoader,
           Component: ChatPge,
+          shouldRevalidate:({ currentParams, nextParams })=>{
+            return currentParams.conversationId !== nextParams.conversationId
+          }
         },
       ],
     },
