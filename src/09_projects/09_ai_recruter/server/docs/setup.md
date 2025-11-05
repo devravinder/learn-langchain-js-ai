@@ -21,8 +21,8 @@
 
 
 
-1. Postgres db to store messages
+2. Postgres db to store messages
    - pass db env variables in .env
-2. qdrant db for vector storage
+3. qdrant db for vector storage
    - pass qdrant url in .env
-3. 
+4. 
