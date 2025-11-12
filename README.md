@@ -15,3 +15,19 @@
 
 ## Terminalogy
 
+
+##  Advanced concepts ( Yet to implement )
+3. interrupt
+1. Command 
+      - to resume interrupted workflow
+      - in conditional node to update state
+      - inside tool to update state
+2. Send
+4. contextSchema
+5. Recursion limit ( Proactive vs reactive approaches )
+6. Pass private state between nodes
+7. Define input and output schemas
+8. Exception handling & retry policy
+9. [Time travel](https://docs.langchain.com/oss/javascript/langgraph/use-time-travel)
+3. Functional API - implement all Graph features with Functioanal API
+
