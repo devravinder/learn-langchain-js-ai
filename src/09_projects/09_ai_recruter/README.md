@@ -1,0 +1,1 @@
+# Migrated to [Smart Hire](https://github.com/devravinder/smart-hire)
